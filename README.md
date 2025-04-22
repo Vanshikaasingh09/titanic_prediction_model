@@ -24,4 +24,4 @@ Docker Deployment
  docker build -t titanic-app .
 2. Run the Docker container:
  docker run -p 8501:8501 titanic-app
- The app will be available at http://localhost:8501
+ The app will be available at https://titanicpredictionmodel-acydc9kfyest4eaude5pxb.streamlit.app/
