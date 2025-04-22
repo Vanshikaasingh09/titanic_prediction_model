@@ -1,28 +1,29 @@
 import streamlit as st
-import joblib
-import numpy as np
 import pickle
-with open("survival_model.pkl", "rb") as file:
-    model = pickle.load(file)
+import numpy as np
 
 # Load the trained model
-model = joblib.load("survival_model.pkl")
+with open("model/titanic_model.pkl", "rb") as file:
+    model = pickle.load(file)
 
-# Streamlit app UI
-st.title("Survival Prediction App")
+st.title("🎯 Titanic Survival Predictor")
 
-# Input fields
-age = st.number_input("Enter Age:", min_value=0, max_value=120, value=30)
-sex = st.selectbox("Select Sex:", ["Male", "Female"])
-smoker = st.selectbox("Are you a Smoker?", ["Yes", "No"])
+# User inputs
+sex = st.selectbox("Sex", ["male", "female"])
+pclass = st.selectbox("Passenger Class (1 = 1st, 2 = 2nd, 3 = 3rd)", [1, 2, 3])
+age = st.slider("Age", 0, 100, 25)
+sibsp = st.number_input("Number of Siblings/Spouses Aboard", 0, 10, 0)
+parch = st.number_input("Number of Parents/Children Aboard", 0, 10, 0)
+fare = st.slider("Fare", 0.0, 500.0, 50.0)
+embarked = st.selectbox("Port of Embarkation", ["S", "C", "Q"])
 
-# Convert categorical data
-sex = 1 if sex == "Male" else 0
-smoker = 1 if smoker == "Yes" else 0
+# Map categorical inputs
+sex = 0 if sex == "male" else 1
+embarked_map = {"S": 0, "C": 1, "Q": 2}
+embarked = embarked_map[embarked]
 
-# Predict button
+# Predict
 if st.button("Predict"):
-    features = np.array([[age, sex, smoker]])
+    features = np.array([[pclass, sex, age, sibsp, parch, fare, embarked]])
     prediction = model.predict(features)[0]
-    
-    st.write(f"Predicted Survival Probability: {prediction:.2f}")
+    st.success("🎉 Survived!" if prediction == 1 else "❌ Did not survive.")
